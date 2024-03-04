@@ -4,9 +4,9 @@
 #include <unistd.h>
 
 #include "hal/microphone.h"
-#include "hal/motion_sensor.h"
+#include "hal/cameraTrigger.h"
 
-MotionEvent motionEvent;
+CameraEvent motionEvent;
 
 int main() {
     // while (true) {
@@ -14,13 +14,13 @@ int main() {
     //     printf("Microphone voltage = %d\n", microphoneVoltage);
     // }
 
-    // test code for motion sensor event
-    MotionSensor_init(&motionEvent);
-    while (true) {
-        event_wait(&motionEvent);
-        printf("Turn on the camera now! (pretend this is from the camera module)\n");
-    }
-    MotionSensor_cleanup(&motionEvent);
+    // test code for triggering camera event; try hooking it up with the camera later and turning up the timeout
+    // CameraTrigger_init(&motionEvent);
+    // while (true) {
+    //     event_wait(&motionEvent);
+    //     printf("Turn on the camera now! (pretend this is from the camera module)\n");
+    // }
+    // CameraTrigger_cleanup(&motionEvent);
 
     return 0;
 }
