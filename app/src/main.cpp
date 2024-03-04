@@ -6,6 +6,7 @@
 #include "hal/microphone.h"
 #include "hal/motion_sensor.h"
 
+MotionEvent motionEvent;
 
 int main() {
     // while (true) {
@@ -13,11 +14,13 @@ int main() {
     //     printf("Microphone voltage = %d\n", microphoneVoltage);
     // }
 
+    // test code for motion sensor event
+    MotionSensor_init(&motionEvent);
     while (true) {
-        int msVoltage = MotionSensor_getVoltage1Reading();
-        printf("Motion sensor voltage = %d\n", msVoltage);
-        usleep(10000);
+        event_wait(&motionEvent);
+        printf("Turn on the camera now! (pretend this is from the camera module)\n");
     }
+    MotionSensor_cleanup(&motionEvent);
 
     return 0;
 }
