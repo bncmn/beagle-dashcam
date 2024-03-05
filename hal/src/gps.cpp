@@ -2,8 +2,33 @@
 
 int serial_port;
 
+// function given by Brian Fraser
+static void runCommand(const char* command)
+{
+    // Execute the shell command (output into pipe)
+    FILE *pipe = popen(command, "r");
+    // Ignore output of the command; but consume it
+    // so we don't get an error when closing the pipe.
+    char buffer[1024];
+    while (!feof(pipe) && !ferror(pipe)) {
+        if (fgets(buffer, sizeof(buffer), pipe) == NULL)
+            break;
+        // printf("--> %s", buffer); // Uncomment for debugging
+    }
+    // Get the exit code from the pipe; non-zero is an error:
+    int exitCode = WEXITSTATUS(pclose(pipe));
+    if (exitCode != 0) {
+        perror("Unable to execute command:");
+        printf(" command: %s\n", command);
+        printf(" exit code: %d\n", exitCode);
+    }
+}
+
 // Taken from https://blog.mbedded.ninja/programming/operating-systems/linux/linux-serial-ports-using-c-cpp/
 void GPS_init() {
+  runCommand("config-pin p9.21 uart");
+  runCommand("config-pin p9.22 uart");
+
   serial_port = open("/dev/ttyS2", O_RDWR);
   if (serial_port < 0) {
       printf("Error %i from open: %s\n", errno, strerror(errno));
