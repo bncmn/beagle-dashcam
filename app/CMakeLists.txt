@@ -13,3 +13,20 @@ add_custom_command(TARGET bbg_dashcam POST_BUILD
      "$<TARGET_FILE:bbg_dashcam>"
      "~/cmpt433/public/myApps/bbg_dashcam" 
   COMMENT "Copying ARM executable to public NFS directory")
+
+# Build capture.c (using Makefule inside cameraDriver folder)
+add_custom_target(capturer
+  COMMAND ${CMAKE_MAKE_PROGRAM}
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/app/src/cameraDriver
+)
+
+# Copy capture executable to final location and run 'make clean' inside cameraDriver folder.
+add_custom_command(TARGET capturer POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_SOURCE_DIR}/app/src/cameraDriver/capture
+            "~/cmpt433/public/myApps"
+    COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/app/src/cameraDriver clean
+    COMMENT "Copying capture to public NFS directory and cleaning camera source folder"
+)
+
+add_dependencies(bbg_dashcam capturer)
