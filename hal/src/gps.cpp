@@ -13,7 +13,7 @@ static void runCommand(const char* command)
     while (!feof(pipe) && !ferror(pipe)) {
         if (fgets(buffer, sizeof(buffer), pipe) == NULL)
             break;
-        // printf("--> %s", buffer); // Uncomment for debugging
+        printf("--> %s", buffer); // Uncomment for debugging
     }
     // Get the exit code from the pipe; non-zero is an error:
     int exitCode = WEXITSTATUS(pclose(pipe));
@@ -66,12 +66,34 @@ void GPS_init() {
 }
 
 void GPS_read() {
-  char read_buf [256];
-  int n = read(serial_port, &read_buf, sizeof(read_buf));
+  char read_buf[255];
+  int counter = 0;
 
   while (true) {
+    int n = read(serial_port, &read_buf, sizeof(read_buf));
     if (n > 0) {
-      printf(read_buf);
+      if (strncmp(read_buf, "$GNGGA", 6) == 0) {
+        char *token = strtok(read_buf, ",");
+        int lineIndex = 0;
+        char temp[128] = "";
+        while (token != NULL) {
+          if (lineIndex == LAT_MAGNITUDE || lineIndex == LON_MAGNITUDE) {
+            double coord = atof(token);
+            int degrees = static_cast<int>(coord / 100);
+            double minutes = coord - degrees * 100;
+            double decimal_degrees = degrees + minutes / 60.0;
+            sprintf(temp + strlen(temp), "%.6f ", decimal_degrees);
+          } else if (lineIndex == LAT_HEMISPHERE || lineIndex == LON_HEMISPHERE) {
+            strcat(temp, token);
+            strcat(temp, " ");
+          }
+          token = strtok(NULL, ",");
+          lineIndex++;
+        }
+        
+        counter++;
+        printf("FETCH #%d: %s\n", counter, temp);
+      }
     }
   }
 }
