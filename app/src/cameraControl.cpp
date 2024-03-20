@@ -13,7 +13,8 @@ static int vidIdx = 0;
 static int deleteIdx = 5;
 
 static const char* recordCmdFormat = "./capture -F -c 100 -o > ./videos/output%d.raw";
-static const char* convertCmdFormat = "ffmpeg -f mjpeg -i ./videos/output%d.raw -vcodec copy ./videos/%d.mp4";
+//static const char* convertCmdFormat = "ffmpeg -f mjpeg -i ./videos/output%d.raw -vcodec copy ./videos/%d.mp4";
+static const char* deleteCmdFormat = "rm ./videos/output%d.raw";
 
 static void runCommand(const char* command)
 {
@@ -52,13 +53,16 @@ void incrementVideo() {
 
 static void* recordingThread(void*) {
     char recordCmd[1000];
-    char convertCmd[1000];
+    //char convertCmd[1000];
+    char deleteCmd[1000];
 
     while(true) {
         sprintf(recordCmd, recordCmdFormat, vidIdx);
-        sprintf(convertCmd, convertCmdFormat, vidIdx, vidIdx);
+        //sprintf(convertCmd, convertCmdFormat, vidIdx, vidIdx);
+        sprintf(deleteCmd, deleteCmdFormat, deleteIdx);
         runCommand(recordCmd);
-        runCommand(convertCmd);
+        //runCommand(convertCmd);
+        runCommand(deleteCmd);
         incrementVideo();
     }
 }
