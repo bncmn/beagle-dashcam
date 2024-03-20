@@ -1,6 +1,5 @@
 #include "hal/cameraTrigger.h"
 
-
 // Assume AUD pin is connected to AIN0 (pin 39)
 const char* A2D_FILE_VOLTAGE1 = "/sys/bus/iio/devices/iio:device0/in_voltage1_raw";
 // assume button is wired to p9.15
