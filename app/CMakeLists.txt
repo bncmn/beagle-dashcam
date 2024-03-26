@@ -30,3 +30,10 @@ add_custom_command(TARGET capturer POST_BUILD
 )
 
 add_dependencies(bbg_dashcam capturer)
+
+# Copy the NodeJS server to NFS
+add_custom_command(TARGET bbg_dashcam POST_BUILD 
+  COMMAND "${CMAKE_COMMAND}" -E copy_directory
+     "${CMAKE_SOURCE_DIR}/dashcam-server"
+     "~/cmpt433/public/myApps/dashcam-server-copy" 
+  COMMENT "Copying NodeJS server to public NFS directory")
