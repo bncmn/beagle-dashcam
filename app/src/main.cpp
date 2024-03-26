@@ -7,6 +7,7 @@
 #include "hal/cameraTrigger.h"
 #include "hal/gps.h"
 #include "cameraControl.h"
+#include "hal/sdCard.h"
 
 int main() {
     // while (true) {
@@ -14,9 +15,13 @@ int main() {
     //     printf("Microphone voltage = %d\n", microphoneVoltage);
     // }
 
+    mountSDCard();
+
     CameraControl_init();
 
     CameraControl_cleanup();
+
+    unmountSDCard();
 
     // GPS_init();
     // GPS_read();
