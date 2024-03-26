@@ -1,17 +1,19 @@
-#include "cameraControl.h"
 #include <pthread.h>
 #include <unistd.h>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include "hal/cameraTrigger.h"
 #include <time.h>
 #include <string>
 #include <ctime>
 #include <iomanip>
 #include <sstream>
 
-#define MAX_STR_LEN 100
+#include "cameraControl.h"
+#include "hal/cameraTrigger.h"
+#include "hal/gps.h"
+
+#define MAX_STR_LEN 255
 
 static pthread_t recording_tid;
 static void* recordingThread(void*);
@@ -99,9 +101,9 @@ static void* conversionThread(void*) {
 
     while (true) {
         event_wait(&motionEvent);
-        std::string datetime_str = getDateTimeStr();
-        const char* datetime_cstr = datetime_str.c_str();
-        sprintf(convertCmd, convertCmdFormat, vidIdx, datetime_cstr);
+        std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
+        const char* stamped_cstr = stamped_str.c_str();
+        sprintf(convertCmd, convertCmdFormat, vidIdx, stamped_cstr);
         runCommand(convertCmd);
     }
 }
