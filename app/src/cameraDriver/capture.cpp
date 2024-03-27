@@ -119,7 +119,7 @@ static void process_image(const void *p, int size)
         }
 
         fflush(stderr);
-        fprintf(stderr, ".");
+        //fprintf(stderr, ".");
         fflush(stdout);
 }
 
