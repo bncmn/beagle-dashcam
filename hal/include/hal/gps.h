@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <termios.h>
 #include <unistd.h>
+#include <string>
 
 #define LAT_MAGNITUDE 2
 #define LAT_HEMISPHERE 3
@@ -15,7 +16,7 @@
 #define LON_HEMISPHERE 5
 
 void GPS_init(void);
-void GPS_read(void);
+std::string GPS_read(void);
 void GPS_cleanup(void);
 
 #endif

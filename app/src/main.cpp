@@ -9,18 +9,11 @@
 #include "cameraControl.h"
 
 int main() {
-    // while (true) {
-    //     int microphoneVoltage = Microphone_getVoltage6Reading();
-    //     printf("Microphone voltage = %d\n", microphoneVoltage);
-    // }
-
+    GPS_init();
     CameraControl_init();
 
     CameraControl_cleanup();
-
-    // GPS_init();
-    // GPS_read();
     // GPS_cleanup();
-
+    
     return 0;
 }
