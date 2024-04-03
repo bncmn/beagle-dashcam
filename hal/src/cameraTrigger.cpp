@@ -78,7 +78,7 @@ static void* detectMotion(void *arg) {
 		if (getReading(A2D_FILE_VOLTAGE1) > 4000) {
 			event_trigger(event);
 			sleep(3);
-			printf("Timeout period ended\n");
+			printf("Motion detecting reactivated.\n");
 		}
 	}
 }
@@ -90,7 +90,7 @@ static void* detectButtonPress(void *arg) {
 		if (getReading(BUTTON)) {
 			event_trigger(event);
 			sleep(1);
-			printf("Timeout period ended\n");
+			printf("Button reactivated.\n");
 		}
 	}
 }

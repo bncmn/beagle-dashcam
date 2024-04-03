@@ -26,7 +26,7 @@ static int deleteIdx = 5;
 
 CameraEvent motionEvent;
 
-static const char* recordCmdFormat = "./capture -F -c 100 -o > ./videos/output%d.raw";
+static const char* recordCmdFormat = "./capture -F -c 1500 -o > ./videos/output%d.raw";
 static const char* convertCmdFormat = "ffmpeg -f mjpeg -i ./videos/output%d.raw -vcodec copy ./videos/%s.mp4";
 static const char* deleteCmdFormat = "rm ./videos/output%d.raw";
 
@@ -106,6 +106,7 @@ static void* conversionThread(void*) {
         const char* stamped_cstr = stamped_str.c_str();
         sprintf(convertCmd, convertCmdFormat, vidIdx, stamped_cstr);
         Buzzer_playSound();
+        printf("Saving clip as %s.mp3\n", stamped_cstr);
         runCommand(convertCmd);
     }
 }
