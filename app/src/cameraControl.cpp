@@ -12,6 +12,7 @@
 #include "cameraControl.h"
 #include "hal/cameraTrigger.h"
 #include "hal/gps.h"
+#include "hal/buzzer.h"
 
 #define MAX_STR_LEN 255
 
@@ -104,6 +105,7 @@ static void* conversionThread(void*) {
         std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
         const char* stamped_cstr = stamped_str.c_str();
         sprintf(convertCmd, convertCmdFormat, vidIdx, stamped_cstr);
+        Buzzer_playSound();
         runCommand(convertCmd);
     }
 }

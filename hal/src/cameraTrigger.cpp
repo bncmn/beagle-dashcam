@@ -96,10 +96,10 @@ static void* detectButtonPress(void *arg) {
 }
 
 void CameraTrigger_init(CameraEvent *event) {
-	runCommand("config-pin p9.15 gpio");
+  runCommand("config-pin p9.15 gpio");
 	pthread_mutex_init(&event->mutex, NULL);
-    pthread_cond_init(&event->cond, NULL);
-    event->flag = 0;
+  pthread_cond_init(&event->cond, NULL);
+  event->flag = 0;
 	pthread_create(&motion_sensor_tid, NULL, detectMotion, (void *)event);
 	pthread_create(&button_tid, NULL, detectButtonPress, (void *)event);
 }

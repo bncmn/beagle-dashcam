@@ -4,8 +4,7 @@ project(bbg_dashcam VERSION 1.0 DESCRIPTION "CMPT 433 Project" LANGUAGES CXX)
 
 # Compiler options (inherited by sub-folders)
 set(CMAKE_CXX_STANDARD 11)  # Use the desired C++ standard (e.g., 11, 14, 17, etc.)
-add_compile_options(-Wall -Werror -Wpedantic -Wextra)
-add_compile_options(-Wall -Werror -Wpedantic -Wextra)
+#add_compile_options(-Wall -Werror -Wpedantic -Wextra)
 add_compile_options(-fdiagnostics-color)
 add_compile_options(-D _POSIX_C_SOURCE=200809L)
 
