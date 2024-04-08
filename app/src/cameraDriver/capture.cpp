@@ -233,7 +233,7 @@ static void mainloop(void)
                         FD_SET(fd, &fds);
 
                         /* Timeout. */
-                        tv.tv_sec = 5;
+                        tv.tv_sec = 7;
                         tv.tv_usec = 0;
 
                         r = select(fd + 1, &fds, NULL, NULL, &tv);
@@ -533,7 +533,7 @@ static void init_device(void)
         CLEAR(fmt);
 
         fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-	fprintf(stderr, "Force Format %d\n", force_format);
+	//fprintf(stderr, "Force Format %d\n", force_format);
         if (force_format) {
 		if (force_format==2){
                         fmt.fmt.pix.width       = 1280;     

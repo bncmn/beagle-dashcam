@@ -13,7 +13,7 @@ static void runCommand(const char* command)
     while (!feof(pipe) && !ferror(pipe)) {
         if (fgets(buffer, sizeof(buffer), pipe) == NULL)
             break;
-        printf("--> %s", buffer); // Uncomment for debugging
+        //printf("--> %s", buffer); // Uncomment for debugging
     }
     // Get the exit code from the pipe; non-zero is an error:
     int exitCode = WEXITSTATUS(pclose(pipe));
@@ -26,10 +26,9 @@ static void runCommand(const char* command)
 
 // Taken from https://blog.mbedded.ninja/programming/operating-systems/linux/linux-serial-ports-using-c-cpp/
 void GPS_init() {
-  runCommand("config-pin p9.21 uart");
-  runCommand("config-pin p9.22 uart");
+  runCommand("config-pin p9.11 uart");
 
-  serial_port = open("/dev/ttyS2", O_RDWR);
+  serial_port = open("/dev/ttyS4", O_RDWR);
   if (serial_port < 0) {
       printf("Error %i from open: %s\n", errno, strerror(errno));
   }
@@ -87,9 +86,12 @@ std::string GPS_read() {
 
           temp += std::to_string(decimal_degrees) + "_";
         } 
-        else if (lineIndex == LAT_HEMISPHERE || lineIndex == LON_HEMISPHERE) {
+        else if (lineIndex == LAT_HEMISPHERE) {
           temp += token;
           temp += "_";
+        }
+        else if (lineIndex == LON_HEMISPHERE) {
+          temp += token;
         }
         token = strtok(NULL, ",");
         lineIndex++;

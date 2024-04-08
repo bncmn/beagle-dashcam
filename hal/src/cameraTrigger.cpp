@@ -7,8 +7,10 @@ const char* BUTTON = "/sys/class/gpio/gpio48/value";
 
 static pthread_t motion_sensor_tid;
 static pthread_t button_tid;
+static pthread_t collision_tid;
 static void* detectMotion(void*);
 static void* detectButtonPress(void*);
+static void* detectCollision(void*);
 
 // function given by Brian Fraser
 static void runCommand(const char* command)
@@ -78,7 +80,7 @@ static void* detectMotion(void *arg) {
 		if (getReading(A2D_FILE_VOLTAGE1) > 4000) {
 			event_trigger(event);
 			sleep(3);
-			printf("Timeout period ended\n");
+			printf("Motion detecting reactivated.\n");
 		}
 	}
 }
@@ -90,23 +92,37 @@ static void* detectButtonPress(void *arg) {
 		if (getReading(BUTTON)) {
 			event_trigger(event);
 			sleep(1);
-			printf("Timeout period ended\n");
+			printf("Button reactivated.\n");
 		}
 	}
 }
 
+static void* detectCollision(void *arg) {
+  CameraEvent *event = (CameraEvent *)arg;
+  // replace with shutdown condition later
+  while (true) {
+    if (Accelerometer_checkThreshold()) {
+      event_trigger(event);
+      sleep(5);
+      printf("Accelerometer reactivated.\n");
+    }
+  }
+}
+
 void CameraTrigger_init(CameraEvent *event) {
-	runCommand("config-pin p9.15 gpio");
+  runCommand("config-pin p9.15 gpio");
 	pthread_mutex_init(&event->mutex, NULL);
-    pthread_cond_init(&event->cond, NULL);
-    event->flag = 0;
+  pthread_cond_init(&event->cond, NULL);
+  event->flag = 0;
 	pthread_create(&motion_sensor_tid, NULL, detectMotion, (void *)event);
 	pthread_create(&button_tid, NULL, detectButtonPress, (void *)event);
+  pthread_create(&collision_tid, NULL, detectCollision, (void *)event);
 }
 
 void CameraTrigger_cleanup(CameraEvent *event) {
-    pthread_join(motion_sensor_tid, NULL);
+  pthread_join(motion_sensor_tid, NULL);
 	pthread_join(button_tid, NULL);
-    pthread_mutex_destroy(&event->mutex);
-    pthread_cond_destroy(&event->cond);
+  pthread_join(collision_tid, NULL);
+  pthread_mutex_destroy(&event->mutex);
+  pthread_cond_destroy(&event->cond);
 }

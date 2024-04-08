@@ -12,6 +12,8 @@
 #include "cameraControl.h"
 #include "hal/cameraTrigger.h"
 #include "hal/gps.h"
+#include "hal/buzzer.h"
+#include "hal/14Seg.h"
 
 #define MAX_STR_LEN 255
 
@@ -23,7 +25,7 @@ static void* conversionThread(void*);
 static int vidIdx = 0;
 static int deleteIdx = 5;
 
-CameraEvent motionEvent;
+CameraEvent event;
 
 static const char* recordCmdFormat = "./capture -F -c 100 -o > ./videos/output%d.raw";
 static const char* convertCmdFormat = "ffmpeg -f mjpeg -i ./videos/output%d.raw -vcodec copy ./videos/%s.mp4";
@@ -62,15 +64,16 @@ std::string getDateTimeStr() {
 }
 
 void CameraControl_init() {
-    CameraTrigger_init(&motionEvent);
+    CameraTrigger_init(&event);
     pthread_create(&recording_tid, NULL, recordingThread, NULL);
     pthread_create(&conversion_tid, NULL, conversionThread, NULL);
+    //Display_set(0);
 }
 
 void CameraControl_cleanup() {
     pthread_join(recording_tid, NULL);
     pthread_join(conversion_tid, NULL);
-    CameraTrigger_cleanup(&motionEvent);
+    CameraTrigger_cleanup(&event);
 }
 
 void incrementVideo() {
@@ -91,6 +94,7 @@ static void* recordingThread(void*) {
         sprintf(recordCmd, recordCmdFormat, vidIdx);
         sprintf(deleteCmd, deleteCmdFormat, deleteIdx);
         runCommand(recordCmd);
+        Display_set(vidIdx);
         runCommand(deleteCmd);
         incrementVideo();
     }
@@ -100,10 +104,12 @@ static void* conversionThread(void*) {
     char convertCmd[MAX_STR_LEN];
 
     while (true) {
-        event_wait(&motionEvent);
+        event_wait(&event);
         std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
         const char* stamped_cstr = stamped_str.c_str();
         sprintf(convertCmd, convertCmdFormat, vidIdx, stamped_cstr);
+        Buzzer_playSound();
+        printf("Saving clip as %s.mp3\n", stamped_cstr);
         runCommand(convertCmd);
     }
 }

@@ -14,7 +14,7 @@ add_custom_command(TARGET bbg_dashcam POST_BUILD
      "~/cmpt433/public/myApps/bbg_dashcam" 
   COMMENT "Copying ARM executable to public NFS directory")
 
-# Build capture.c (using Makefule inside cameraDriver folder)
+# Build capture.c (using Makefile inside cameraDriver folder)
 add_custom_target(capturer
   COMMAND ${CMAKE_MAKE_PROGRAM}
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/app/src/cameraDriver
@@ -37,3 +37,10 @@ add_custom_command(TARGET bbg_dashcam POST_BUILD
      "${CMAKE_SOURCE_DIR}/dashcam-server"
      "~/cmpt433/public/myApps/dashcam-server-copy" 
   COMMENT "Copying NodeJS server to public NFS directory")
+
+  # Create videos folder if it doesn't exist
+add_custom_command(TARGET bbg_dashcam POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E make_directory
+      "~/cmpt433/public/myApps/videos"
+  COMMENT "Creating videos folder"
+)
