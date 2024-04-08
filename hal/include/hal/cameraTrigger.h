@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
+#include "hal/accelerometer.h"
 
 typedef struct {
     pthread_mutex_t mutex;
