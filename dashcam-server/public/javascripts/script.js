@@ -5,6 +5,14 @@ socket.on("connect", (socket) => { //confirm connection with NodeJS server
 
 $( document ).ready(function() {
     console.log("Document loaded");
+    // Check if the checkbox is checked
+    if ($('#toggle').is(':checked')) {
+        // Add class to change background color to grey when checked
+        sendCommandViaUDP("motionOn");
+    } else {
+        // Remove class to change background color to blue when unchecked
+        sendCommandViaUDP("motionOff");
+    }
     // Setup a repeating function (every 1s)
     // Reference: Using HttpsProcTimer code
 	window.setInterval(function() {
