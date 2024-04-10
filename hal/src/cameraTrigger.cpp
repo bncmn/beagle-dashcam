@@ -13,6 +13,8 @@ static void* detectMotion(void*);
 static void* detectButtonPress(void*);
 static void* detectCollision(void*);
 
+static bool isMotionSensorOn = true;
+
 // function given by Brian Fraser
 static void runCommand(const char* command)
 {
@@ -74,11 +76,18 @@ void event_wait(CameraEvent *event) {
     pthread_mutex_unlock(&event->mutex);
 }
 
+void CameraTrigger_turnSensorOn() {
+  isMotionSensorOn = true;
+}
+void CameraTrigger_turnSensorOff() {
+  isMotionSensorOn = false;
+}
+
 static void* detectMotion(void *arg) {
 	CameraEvent *event = (CameraEvent *)arg;
 	// replace with shutdown condition later
 	do {
-		if (getReading(A2D_FILE_VOLTAGE1) > 4000) {
+		if (isMotionSensorOn && getReading(A2D_FILE_VOLTAGE1) > 4000) {
 			event_trigger(event);
 			sleep(3);
 			printf("Motion detecting reactivated.\n");
@@ -115,6 +124,7 @@ void CameraTrigger_init(CameraEvent *event) {
 	pthread_mutex_init(&event->mutex, NULL);
   pthread_cond_init(&event->cond, NULL);
   event->flag = 0;
+  isMotionSensorOn = true;
 	pthread_create(&motion_sensor_tid, NULL, detectMotion, (void *)event);
 	pthread_create(&button_tid, NULL, detectButtonPress, (void *)event);
   pthread_create(&collision_tid, NULL, detectCollision, (void *)event);

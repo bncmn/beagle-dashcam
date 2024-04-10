@@ -1,14 +1,40 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Beagle Dashcam Streaming</title>
+        <title>Beagle Dashcam</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel='stylesheet' href='/stylesheets/style.css'></link>
     </head>
 
     <body>
-        <canvas id="videostream" width="720" height="720"></canvas>
+    <form>
+        <h1>BeagleBone Dashcam Streaming</h1>
+
+        <div id='content'>
+            <div id='status-box'>
+                <h2>Camera's Status</h2>
+                <div id='status'>None yet...</div>
+            </div>
+
+            <div id='left-box'>
+                <canvas id="videostream" width="720" height="720"></canvas>
+
+                <h3>Turn on/off Motion Sensor</h3>
+				<p>
+					<!-- Checkbox input styled as a slide toggle button -->
+                    <label class="switch">
+                        <input type="checkbox"  id="toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+				</p>
+                <p>
+					<input type="button" id="stop" value="Terminate Program"/>
+				</p>
+            </div>
         
+    </form>
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script src="script.js"></script>
