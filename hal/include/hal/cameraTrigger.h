@@ -19,4 +19,7 @@ void CameraTrigger_init(CameraEvent *event);
 void CameraTrigger_cleanup(CameraEvent *event);
 void event_wait(CameraEvent *event);
 
+void CameraTrigger_turnSensorOn();
+void CameraTrigger_turnSensorOff();
+
 #endif
