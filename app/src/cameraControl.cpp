@@ -15,7 +15,6 @@
 #include "hal/buzzer.h"
 #include "hal/14Seg.h"
 #include "hal/sdCard.h"
-#include "terminate.h"
 #include "joystick.h"
 
 #define MAX_STR_LEN 255
@@ -30,7 +29,7 @@ static int deleteIdx = 5;
 
 CameraEvent event;
 
-static const char* recordCmdFormat = "./capture -F -c 100 -o > ./videos/output%d.raw";
+static const char* recordCmdFormat = "./capture -F -c 750 -o > ./videos/output%d.raw";
 static const char* convertCmdFormat = "ffmpeg -f mjpeg -i ./videos/output%d.raw -vcodec copy ./videos/%s.mp4";
 static const char* deleteCmdFormat = "rm ./videos/output%d.raw";
 
@@ -95,35 +94,32 @@ static void* recordingThread(void*) {
     char recordCmd[MAX_STR_LEN];
     char deleteCmd[MAX_STR_LEN];
 
-    do {
+    while (true) {
         sprintf(recordCmd, recordCmdFormat, vidIdx);
         sprintf(deleteCmd, deleteCmdFormat, deleteIdx);
         runCommand(recordCmd);
         Display_set(vidIdx);
         runCommand(deleteCmd);
         incrementVideo();
-
-        if (pressedDown()) {
-            setTerminate();
-        }
-    } while (!isTerminate());
+    }
 }
 
 static void* conversionThread(void*) {
     char convertCmd[MAX_STR_LEN];
     char mp4FileName[MAX_STR_LEN];
 
-    do {
+    while (true) {
         event_wait(&event);
-        std::string stamped_str = getDateTimeStr();
-        // std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
+        // std::string stamped_str = getDateTimeStr();
+        std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
         const char* stamped_cstr = stamped_str.c_str();
         sprintf(convertCmd, convertCmdFormat, vidIdx, stamped_cstr);
         Buzzer_playSound();
         printf("Saving clip as %s.mp3\n", stamped_cstr);
         runCommand(convertCmd);
 
-        sprintf(mp4FileName, mp4File, vidIdx, stamped_cstr);
-        copyFileToSDCard(mp4File);
-    } while (!isTerminate());
+        sprintf(mp4FileName, mp4File, stamped_cstr);
+        printf("Copying %s to SD card\n", mp4FileName);
+        copyFileToSDCard(mp4FileName);
+    }
 }

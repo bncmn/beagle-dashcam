@@ -23,17 +23,18 @@ static void runCommand(const char* command)
 
 // make sure sd card mounted
 void mountSDCard() {
-	runCommand("mount " SD_CARD_PATH " " MOUNT_PATH);
+	runCommand("sudo mount " SD_CARD_PATH " " MOUNT_PATH);
 }
 
 // unmount sd card when done
 void unmountSDCard() {
-	runCommand("umount " MOUNT_PATH);
+	runCommand("sudo umount " MOUNT_PATH);
 }
 
 // can cp (or can change to mv) mp4 file
 void copyFileToSDCard(const char *source_path) {
     char copyCommand[1024];
-    snprintf(copyCommand, sizeof(copyCommand), "cp %s %s", source_path, MOUNT_PATH);
+    snprintf(copyCommand, sizeof(copyCommand), "sudo cp %s %s", source_path, MOUNT_PATH);
+    printf("copyCommand: %s\n", copyCommand);
     runCommand(copyCommand);
 }

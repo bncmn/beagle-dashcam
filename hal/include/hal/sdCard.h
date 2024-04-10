@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MOUNT_PATH "/mnt/remote/sdcard/"
+#define MOUNT_PATH "/mnt/card/"
 #define SD_CARD_PATH "/dev/mmcblk0p1"
 
 void mountSDCard();

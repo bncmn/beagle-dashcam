@@ -12,10 +12,10 @@
 #include "cameraControl.h"
 #include "hal/sdCard.h"
 #include "joystick.h"
-#include "terminate.h"
 
 int main() {
   printf("Launching BeagleDashCam...\n");
+  unmountSDCard();
   mountSDCard();
   initJoystickDown();
   GPS_init();
