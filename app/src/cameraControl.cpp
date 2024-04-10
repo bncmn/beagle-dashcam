@@ -16,6 +16,7 @@
 #include "hal/14Seg.h"
 #include "hal/sdCard.h"
 #include "terminate.h"
+#include "joystick.h"
 
 #define MAX_STR_LEN 255
 
@@ -94,29 +95,25 @@ static void* recordingThread(void*) {
     char recordCmd[MAX_STR_LEN];
     char deleteCmd[MAX_STR_LEN];
 
-    while(true) {
-        if (isTerminate()) {
-            break;
-        }
-
+    do {
         sprintf(recordCmd, recordCmdFormat, vidIdx);
         sprintf(deleteCmd, deleteCmdFormat, deleteIdx);
         runCommand(recordCmd);
         Display_set(vidIdx);
         runCommand(deleteCmd);
         incrementVideo();
-    }
+
+        if (pressedDown()) {
+            setTerminate();
+        }
+    } while (!isTerminate());
 }
 
 static void* conversionThread(void*) {
     char convertCmd[MAX_STR_LEN];
     char mp4FileName[MAX_STR_LEN];
 
-    while (true) {
-        if (isTerminate()) {
-            break;
-        }
-
+    do {
         event_wait(&event);
         std::string stamped_str = getDateTimeStr();
         // std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
@@ -128,5 +125,5 @@ static void* conversionThread(void*) {
 
         sprintf(mp4FileName, mp4File, vidIdx, stamped_cstr);
         copyFileToSDCard(mp4File);
-    }
+    } while (!isTerminate());
 }
