@@ -27,7 +27,7 @@ static int deleteIdx = 5;
 
 CameraEvent event;
 
-static const char* recordCmdFormat = "./capture -F -c 100 -o > ./videos/output%d.raw";
+static const char* recordCmdFormat = "./capture -F -c 1000 -o > ./videos/output%d.raw";
 static const char* convertCmdFormat = "ffmpeg -f mjpeg -i ./videos/output%d.raw -vcodec copy ./videos/%s.mp4";
 static const char* deleteCmdFormat = "rm ./videos/output%d.raw";
 
@@ -102,7 +102,6 @@ static void* recordingThread(void*) {
 
 static void* conversionThread(void*) {
     char convertCmd[MAX_STR_LEN];
-
     while (true) {
         event_wait(&event);
         std::string stamped_str = getDateTimeStr() + "_" + GPS_read();

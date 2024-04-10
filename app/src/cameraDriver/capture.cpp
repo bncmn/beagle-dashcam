@@ -36,7 +36,8 @@
 #include <netdb.h>
 
 #define PORT_T 8088
-#define RPORT_T 1234 //Port for NodeJS
+#define RPORT_T 1234 //Port for NodeJS - streaming only
+
 static struct sockaddr_in sinT;
 static struct sockaddr_in sinRemoteT;
 static int socketDescriptorT;
@@ -72,6 +73,7 @@ void openConnectionT()
         sinT.sin_port = htons(PORT_T);
         socketDescriptorT = socket(PF_INET, SOCK_DGRAM, 0);
         bind(socketDescriptorT, (struct sockaddr*) &sinT, sizeof(sinT));
+        
         sinRemoteT.sin_family = AF_INET;
         sinRemoteT.sin_port = htons(RPORT_T);
         sinRemoteT.sin_addr.s_addr = inet_addr("192.168.7.1");
