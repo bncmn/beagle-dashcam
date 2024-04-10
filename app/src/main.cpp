@@ -10,6 +10,7 @@
 #include "hal/accelerometer.h"
 #include "hal/14Seg.h"
 #include "cameraControl.h"
+#include "udpNetwork.h"
 
 int main() {
   printf("Launching BeagleDashCam...\n");
@@ -17,6 +18,7 @@ int main() {
   Buzzer_init();
   Display_init();
   Acceleromerter_init();
+  Udp_init();
   CameraControl_init();
 
 

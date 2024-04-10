@@ -102,14 +102,16 @@ static void* recordingThread(void*) {
 
 static void* conversionThread(void*) {
     char convertCmd[MAX_STR_LEN];
-
+    int videoIt = 0;
     while (true) {
         event_wait(&event);
-        std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
+        //std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
+        std::string stamped_str = getDateTimeStr() + "_" + std::to_string(videoIt);
         const char* stamped_cstr = stamped_str.c_str();
         sprintf(convertCmd, convertCmdFormat, vidIdx, stamped_cstr);
         Buzzer_playSound();
         printf("Saving clip as %s.mp3\n", stamped_cstr);
         runCommand(convertCmd);
+        videoIt++;
     }
 }
