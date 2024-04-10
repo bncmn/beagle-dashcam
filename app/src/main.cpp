@@ -8,6 +8,8 @@
 #include "hal/gps.h"
 #include "cameraControl.h"
 #include "hal/sdCard.h"
+#include "hal/joystick.h"
+#include "terminate.h"
 
 int main() {
     // while (true) {
@@ -16,6 +18,7 @@ int main() {
     // }
 
     mountSDCard();
+    initJoystickDown();
 
     CameraControl_init();
 

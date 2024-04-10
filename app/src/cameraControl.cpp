@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "hal/cameraTrigger.h"
+#include "hal/sdCard.h"
+#include "terminate.h"
 #include <time.h>
 #include <string>
 #include <ctime>
@@ -26,6 +28,8 @@ CameraEvent motionEvent;
 static const char* recordCmdFormat = "./capture -F -c 100 -o > ./videos/output%d.raw";
 static const char* convertCmdFormat = "ffmpeg -f mjpeg -i ./videos/output%d.raw -vcodec copy ./videos/%s.mp4";
 static const char* deleteCmdFormat = "rm ./videos/output%d.raw";
+
+static const char* mp4File = "./videos/%s.mp4";
 
 static void runCommand(const char* command)
 {
@@ -86,6 +90,9 @@ static void* recordingThread(void*) {
     char deleteCmd[MAX_STR_LEN];
 
     while(true) {
+        if (isTerminate()) {
+            break;
+        }
         sprintf(recordCmd, recordCmdFormat, vidIdx);
         sprintf(deleteCmd, deleteCmdFormat, deleteIdx);
         runCommand(recordCmd);
@@ -96,12 +103,19 @@ static void* recordingThread(void*) {
 
 static void* conversionThread(void*) {
     char convertCmd[MAX_STR_LEN];
+    char mp4FileName[MAX_STR_LEN];
 
     while (true) {
+        if (isTerminate()) {
+            break;
+        }
         event_wait(&motionEvent);
         std::string datetime_str = getDateTimeStr();
         const char* datetime_cstr = datetime_str.c_str();
         sprintf(convertCmd, convertCmdFormat, vidIdx, datetime_cstr);
         runCommand(convertCmd);
+        
+        sprintf(mp4FileName, mp4File, datetime_cstr);
+        copyFileToSDCard(mp4File);
     }
 }

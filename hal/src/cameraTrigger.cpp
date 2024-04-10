@@ -1,4 +1,5 @@
 #include "hal/cameraTrigger.h"
+#include "terminate.h"
 
 // Assume AUD pin is connected to AIN0 (pin 39)
 const char* A2D_FILE_VOLTAGE1 = "/sys/bus/iio/devices/iio:device0/in_voltage1_raw";
@@ -75,6 +76,9 @@ static void* detectMotion(void *arg) {
 	CameraEvent *event = (CameraEvent *)arg;
 	// replace with shutdown condition later
 	while (true) {
+		if (isTerminate()) {
+            break;
+        }
 		if (getReading(A2D_FILE_VOLTAGE1) > 4000) {
 			event_trigger(event);
 			sleep(3);
@@ -87,6 +91,9 @@ static void* detectButtonPress(void *arg) {
 	CameraEvent *event = (CameraEvent *)arg;
 	// replace with shutdown condition later
 	while (true) {
+		if (isTerminate()) {
+            break;
+        }
 		if (getReading(BUTTON)) {
 			event_trigger(event);
 			sleep(1);
