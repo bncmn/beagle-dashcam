@@ -10,9 +10,14 @@
 #include "hal/accelerometer.h"
 #include "hal/14Seg.h"
 #include "cameraControl.h"
+#include "hal/sdCard.h"
+#include "joystick.h"
+#include "terminate.h"
 
 int main() {
   printf("Launching BeagleDashCam...\n");
+  mountSDCard();
+  initJoystickDown();
   GPS_init();
   Buzzer_init();
   Display_init();
@@ -21,6 +26,7 @@ int main() {
 
 
   CameraControl_cleanup();
+  unmountSDCard();
   // GPS_cleanup();
   
   return 0;
