@@ -1,5 +1,4 @@
 #include "hal/cameraTrigger.h"
-#include "terminate.h"
 
 // Assume AUD pin is connected to AIN0 (pin 39)
 const char* A2D_FILE_VOLTAGE1 = "/sys/bus/iio/devices/iio:device0/in_voltage1_raw";
@@ -12,8 +11,6 @@ static pthread_t collision_tid;
 static void* detectMotion(void*);
 static void* detectButtonPress(void*);
 static void* detectCollision(void*);
-
-static bool isMotionSensorOn = true;
 
 // function given by Brian Fraser
 static void runCommand(const char* command)
@@ -76,47 +73,40 @@ void event_wait(CameraEvent *event) {
     pthread_mutex_unlock(&event->mutex);
 }
 
-void CameraTrigger_turnSensorOn() {
-  isMotionSensorOn = true;
-}
-void CameraTrigger_turnSensorOff() {
-  isMotionSensorOn = false;
-}
-
 static void* detectMotion(void *arg) {
 	CameraEvent *event = (CameraEvent *)arg;
 	// replace with shutdown condition later
-	do {
-		if (isMotionSensorOn && getReading(A2D_FILE_VOLTAGE1) > 4000) {
+	while (true) {
+		if (getReading(A2D_FILE_VOLTAGE1) > 4000) {
 			event_trigger(event);
 			sleep(3);
 			printf("Motion detecting reactivated.\n");
 		}
-	} while (!isTerminate());
+	}
 }
 
 static void* detectButtonPress(void *arg) {
 	CameraEvent *event = (CameraEvent *)arg;
 	// replace with shutdown condition later
-	do {
+	while (true) {
 		if (getReading(BUTTON)) {
 			event_trigger(event);
 			sleep(1);
 			printf("Button reactivated.\n");
 		}
-  } while (!isTerminate());
+  }
 }
 
 static void* detectCollision(void *arg) {
   CameraEvent *event = (CameraEvent *)arg;
   // replace with shutdown condition later
-  do {
+  while (true) {
     if (Accelerometer_checkThreshold()) {
       event_trigger(event);
       sleep(5);
       printf("Accelerometer reactivated.\n");
     }
-  } while (!isTerminate());
+  }
 }
 
 void CameraTrigger_init(CameraEvent *event) {
@@ -124,7 +114,6 @@ void CameraTrigger_init(CameraEvent *event) {
 	pthread_mutex_init(&event->mutex, NULL);
   pthread_cond_init(&event->cond, NULL);
   event->flag = 0;
-  isMotionSensorOn = true;
 	pthread_create(&motion_sensor_tid, NULL, detectMotion, (void *)event);
 	pthread_create(&button_tid, NULL, detectButtonPress, (void *)event);
   pthread_create(&collision_tid, NULL, detectCollision, (void *)event);
