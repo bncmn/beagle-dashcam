@@ -1,6 +1,10 @@
 #include "joystick.h"
+#include <shutdown.h>
 
 const int JOYSTICK_PINS[] = {26, 27, 47, 46, 65};
+
+static void* joystickThread(void *arg);
+static pthread_t joystick_TID;
 
 static void runCommand(const char *command) {
     // Execute the shell command (output into pipe)
@@ -102,4 +106,21 @@ void initAllPins(void) {
     for (int i = 0; i < numDirections; i++) {
         initPin(JOYSTICK_PINS[i]);
     }
+}
+
+void joystick_init() {
+    pthread_create(&joystick_TID, NULL, joystickThread, NULL);
+}
+
+void joystick_cleanup() {
+    pthread_join(joystick_TID, NULL);
+}
+
+static void* joystickThread(void *arg) {
+    while (!Shutdown_isShutdown()) {
+        if (anyDirectionPressed()) {
+            Shutdown_triggerShutdown();
+        }
+    }
+    return NULL;
 }

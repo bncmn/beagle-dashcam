@@ -136,5 +136,5 @@ static void Udp_commandTime() {
 static void Udp_commandStop() {
     std::string messageTx = " Program terminating.\n";
     Udp_sendMessage(messageTx.c_str());
-    //Shutdown_triggerShutdown();
+    Shutdown_triggerShutdown();
 }
