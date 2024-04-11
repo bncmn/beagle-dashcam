@@ -2,6 +2,8 @@
 
 int serial_port;
 
+bool gps_connected = false;
+
 // function given by Brian Fraser
 static void runCommand(const char* command)
 {
@@ -31,6 +33,9 @@ void GPS_init() {
   serial_port = open("/dev/ttyS4", O_RDWR);
   if (serial_port < 0) {
       printf("Error %i from open: %s\n", errno, strerror(errno));
+  }
+  else {
+      gps_connected = true;
   }
 
   struct termios tty;
@@ -106,4 +111,8 @@ std::string GPS_read() {
 
 void GPS_cleanup() {
   close(serial_port);
+}
+
+bool GPS_connected() {
+  return gps_connected;
 }

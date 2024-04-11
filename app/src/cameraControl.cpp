@@ -114,8 +114,13 @@ static void* conversionThread(void*) {
 
     while (!Shutdown_isShutdown()) {
         event_wait(&event);
-        std::string stamped_str = getDateTimeStr();
-        // std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
+        if (GPS_connected()) {
+            std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
+        }
+        else {
+            std::string stamped_str = getDateTimeStr();
+        }
+        
         const char* stamped_cstr = stamped_str.c_str();
         Buzzer_playSound();
 
