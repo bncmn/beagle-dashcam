@@ -14,6 +14,9 @@
 #include "hal/gps.h"
 #include "hal/buzzer.h"
 #include "hal/14Seg.h"
+#include "hal/sdCard.h"
+#include "joystick.h"
+#include "shutdown.h"
 
 #define MAX_STR_LEN 255
 
@@ -30,6 +33,8 @@ CameraEvent event;
 static const char* recordCmdFormat = "./capture -F -c 1000 -o > ./videos/output%d.raw";
 static const char* convertCmdFormat = "ffmpeg -f mjpeg -i ./videos/output%d.raw -vcodec copy ./videos/%s.mp4";
 static const char* deleteCmdFormat = "rm ./videos/output%d.raw";
+
+static const char* mp4File = "./videos/%s.mp4";
 
 static void runCommand(const char* command)
 {
@@ -90,7 +95,7 @@ static void* recordingThread(void*) {
     char recordCmd[MAX_STR_LEN];
     char deleteCmd[MAX_STR_LEN];
 
-    while(true) {
+    while (!Shutdown_isShutdown()) {
         sprintf(recordCmd, recordCmdFormat, vidIdx);
         sprintf(deleteCmd, deleteCmdFormat, deleteIdx);
         runCommand(recordCmd);
@@ -98,17 +103,26 @@ static void* recordingThread(void*) {
         runCommand(deleteCmd);
         incrementVideo();
     }
+    return nullptr;
 }
 
 static void* conversionThread(void*) {
     char convertCmd[MAX_STR_LEN];
-    while (true) {
+    char mp4FileName[MAX_STR_LEN];
+
+    while (!Shutdown_isShutdown()) {
         event_wait(&event);
+        // std::string stamped_str = getDateTimeStr();
         std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
         const char* stamped_cstr = stamped_str.c_str();
         sprintf(convertCmd, convertCmdFormat, vidIdx, stamped_cstr);
         Buzzer_playSound();
         printf("Saving clip as %s.mp3\n", stamped_cstr);
         runCommand(convertCmd);
+
+        sprintf(mp4FileName, mp4File, stamped_cstr);
+        printf("Copying %s to SD card\n", mp4FileName);
+        copyFileToSDCard(mp4FileName);
     }
+    return nullptr;
 }

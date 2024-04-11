@@ -1,6 +1,6 @@
 #include "hal/buzzer.h"
 
-static void runCommand(char* command) {
+static void runCommand(const char* command) {
   // Execute the shell command (output into pipe)
   FILE *pipe = popen(command, "r");
   
@@ -22,7 +22,7 @@ static void runCommand(char* command) {
   }
 }
 
-static void writeToFile(char *pWriteValue, char *filePath) {
+static void writeToFile(const char *pWriteValue, const char *filePath) {
   FILE *pFile = fopen(filePath, "w");
   if (pFile == NULL) {
     printf("[ERROR] Unable to open file for write.\n");

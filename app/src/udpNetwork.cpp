@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <stdbool.h>
 #include <arpa/inet.h>
+#include "shutdown.h"
 
 #define MSG_MAX_LEN 1024
 #define PORT_NUMBER 8088
@@ -56,7 +57,7 @@ void Udp_cleanup() {
 }
 
 static void* udpThreadFunc(void*) {
-    while (true) {  // change condition to when Shutdown is signal
+    while (!Shutdown_isShutdown()) {  // change condition to when Shutdown is signal
         // Source: code written by Brian Fraser
 		unsigned int sin_len = sizeof(sinRemote);
 		char messageRx[MSG_MAX_LEN];
@@ -135,5 +136,5 @@ static void Udp_commandTime() {
 static void Udp_commandStop() {
     std::string messageTx = " Program terminating.\n";
     Udp_sendMessage(messageTx.c_str());
-    //Shutdown_triggerShutdown();
+    Shutdown_triggerShutdown();
 }
