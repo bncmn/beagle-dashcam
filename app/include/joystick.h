@@ -15,8 +15,10 @@ void writeJoystickFile(int pin);
 
 bool readJoystickFile(int pin);
 
-bool pressedDown(void);
+bool anyDirectionPressed(void);
 
-void initJoystickDown();
+void initPin(int pin);
+
+void initAllPins(void);
 
 #endif

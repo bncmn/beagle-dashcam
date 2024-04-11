@@ -13,20 +13,24 @@
 #include "udpNetwork.h"
 #include "hal/sdCard.h"
 #include "joystick.h"
+#include "shutdown.h"
 
 int main() {
   printf("Launching BeagleDashCam...\n");
   unmountSDCard();
   mountSDCard();
-  initJoystickDown();
   GPS_init();
   Buzzer_init();
   Display_init();
   Acceleromerter_init();
   Udp_init();
   CameraControl_init();
+  initAllPins();
+  Shutdown_init();
 
+  Shutdown_waitingShutdown();
 
+  Shutdown_cleanup();
   CameraControl_cleanup();
   unmountSDCard();
   // GPS_cleanup();

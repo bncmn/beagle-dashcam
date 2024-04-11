@@ -85,37 +85,40 @@ void CameraTrigger_turnSensorOff() {
 static void* detectMotion(void *arg) {
 	CameraEvent *event = (CameraEvent *)arg;
 	// replace with shutdown condition later
-	while (true) {
+	while (!Shutdown_isShutdown()) {
 		if (isMotionSensorOn && getReading(A2D_FILE_VOLTAGE1) > 4000) {
 			event_trigger(event);
 			sleep(3);
 			printf("Motion detecting reactivated.\n");
 		}
 	}
+  return nullptr;
 }
 
 static void* detectButtonPress(void *arg) {
 	CameraEvent *event = (CameraEvent *)arg;
 	// replace with shutdown condition later
-	while (true) {
+	while (!Shutdown_isShutdown()) {
 		if (getReading(BUTTON)) {
 			event_trigger(event);
 			sleep(1);
 			printf("Button reactivated.\n");
 		}
   }
+  return nullptr;
 }
 
 static void* detectCollision(void *arg) {
   CameraEvent *event = (CameraEvent *)arg;
   // replace with shutdown condition later
-  while (true) {
+  while (!Shutdown_isShutdown()) {
     if (Accelerometer_checkThreshold()) {
       event_trigger(event);
       sleep(5);
       printf("Accelerometer reactivated.\n");
     }
   }
+  return nullptr;
 }
 
 void CameraTrigger_init(CameraEvent *event) {

@@ -2,7 +2,7 @@
 
 const int JOYSTICK_PINS[] = {26, 27, 47, 46, 65};
 
-static void runCommand(char *command) {
+static void runCommand(const char *command) {
     // Execute the shell command (output into pipe)
     FILE *pipe = popen(command, "r");
     // Ignore output of the command; but consume it
@@ -77,11 +77,29 @@ bool readJoystickFile(int pin) {
     return atoi(buff) == 0;
 }
 
-bool pressedDown(void) {
-    return readJoystickFile(JOYSTICK_PINS[3]);
+bool anyDirectionPressed(void) {
+    int numDirections = sizeof(JOYSTICK_PINS) / sizeof(JOYSTICK_PINS[0]);
+    for (int i = 0; i < numDirections; i++) {
+        if (readJoystickFile(JOYSTICK_PINS[i])) {
+            return true;
+        }
+    }
+    return false;
 }
 
-void initJoystickDown() {
-    runCommand("config-pin p8.16 gpio");
-    writeJoystickFile(JOYSTICK_PINS[3]);
+void initPin(int pin) {
+    writeJoystickFile(pin);
+}
+
+void initAllPins(void) {
+    runCommand("config-pin p8.14 gpio"); // up
+    runCommand("config-pin p8.15 gpio"); // right
+    runCommand("config-pin p8.16 gpio"); // down
+    runCommand("config-pin p8.17 gpio"); // in
+    runCommand("config-pin p8.18 gpio"); // left
+
+    int numDirections = sizeof(JOYSTICK_PINS) / sizeof(JOYSTICK_PINS[0]);
+    for (int i = 0; i < numDirections; i++) {
+        initPin(JOYSTICK_PINS[i]);
+    }
 }

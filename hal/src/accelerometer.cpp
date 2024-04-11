@@ -2,7 +2,7 @@
 
 int i2cFileDesc;
 
-static void runCommand(char* command) {
+static void runCommand(const char* command) {
   // Execute the shell command (output into pipe)
   FILE *pipe = popen(command, "r");
   
@@ -24,7 +24,7 @@ static void runCommand(char* command) {
   }
 }
 
-static int initI2cBus(char* bus, int address)
+static int initI2cBus(const char* bus, int address)
 {
 	int i2cFileDesc = open(bus, O_RDWR);
 	if (i2cFileDesc < 0) {

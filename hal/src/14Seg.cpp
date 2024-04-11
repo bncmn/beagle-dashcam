@@ -20,7 +20,7 @@ static unsigned char bBits[] = {0xe1, 0x04, 0x83, 0x01, 0x22, 0x23, 0xa3, 0x05, 
 static pthread_t displayThread;
 int numToDisplay = 0;
 
-static void runCommand(char* command) {
+static void runCommand(const char* command) {
   // Execute the shell command (output into pipe)
   FILE *pipe = popen(command, "r");
   
@@ -42,7 +42,7 @@ static void runCommand(char* command) {
   }
 }
 
-static void writeToFile(char *pWriteValue, char *filePath) {
+static void writeToFile(const char *pWriteValue, const char *filePath) {
   FILE *pFile = fopen(filePath, "w");
   if (pFile == NULL) {
     printf("[ERROR] Unable to open file for write.\n");
@@ -68,7 +68,7 @@ static void sleepForMs(long long delayInMs) {
   nanosleep(&reqDelay, (struct timespec *) NULL);
 }
 
-static int initI2cBus(char* bus, int address)
+static int initI2cBus(const char* bus, int address)
 {
 	int i2cFileDesc = open(bus, O_RDWR);
 	if (i2cFileDesc < 0) {
@@ -127,43 +127,7 @@ void Display_init(void) {
 	writeI2cReg(i2cFileDesc, REG_DIRB, 0x00);
 
   close(i2cFileDesc);
-
-  // pthread_create(&displayThread, NULL, Display_drive, NULL);
 }
-
-// void *Display_drive(void* unused) {
-//   (void)unused;
-//   while (true){
-    
-//     // if (numToDisplay > 99) {
-//     //   numToDisplay = 99;
-//     // }
-
-//     //int firstDigit = (numToDisplay >= 10) ? (numToDisplay / 10) : 0;
-//     int secondDigit = numToDisplay % 10;
-    
-//     // writeToFile("0", LEFT_14D_VAL);
-//     // writeToFile("0", RIGHT_14D_VAL);
-
-//     // writeToReg(aBits[firstDigit], bBits[firstDigit]);
-
-//     // writeToFile("1", LEFT_14D_VAL);
-//     // sleepForMs(5);
-
-//     // writeToFile("0", LEFT_14D_VAL);
-//     writeToFile("0", RIGHT_14D_VAL);
-
-//     writeToReg(aBits[secondDigit], bBits[secondDigit]);
-
-//     writeToFile("1", RIGHT_14D_VAL);
-//     // sleepForMs(5);
-//   }
-
-//   // writeToFile("0", LEFT_14D_VAL);
-//   writeToFile("0", RIGHT_14D_VAL);
-
-//   return NULL;
-// }
 
 void Display_set(int num) {
   // numToDisplay = num;
