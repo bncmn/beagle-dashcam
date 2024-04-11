@@ -120,7 +120,7 @@ void joystick_cleanup() {
 static void* joystickThread(void *arg) {
     while (!Shutdown_isShutdown()) {
         if (anyDirectionPressed()) {
-            printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaa\n");
+            printf("Shutdown requested.\n");
             Shutdown_triggerShutdown();
         }
     }

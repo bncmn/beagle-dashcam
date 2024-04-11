@@ -27,6 +27,7 @@ static void* conversionThread(void*);
 
 static int vidIdx = 0;
 static int deleteIdx = 5;
+static bool skipConversion = false;
 
 CameraEvent event;
 
@@ -105,6 +106,12 @@ static void* recordingThread(void*) {
         incrementVideo();
     }
     printf("Terminating RECORDING_THREAD\n");
+    
+    // Attempts to terminate conversion thread without being blocked.
+    skipConversion = true;
+    printf("Skip conversion: %d\n", skipConversion);
+    event_trigger(&event); // there isnt really an event happening but this gets the conversion thread going
+    
     return nullptr;
 }
 
@@ -114,29 +121,26 @@ static void* conversionThread(void*) {
 
     while (!Shutdown_isShutdown()) {
         event_wait(&event);
-        if (GPS_connected()) {
-            std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
-        }
-        else {
-            std::string stamped_str = getDateTimeStr();
-        }
-        
-        const char* stamped_cstr = stamped_str.c_str();
-        Buzzer_playSound();
 
-        if (checkMntSuccess()) {
-            sprintf(convertCmd, convertMp4FileSDCard, vidIdx, stamped_cstr);
-            printf("Saving %s.mp4 to SD card\n", mp4FileName);
-            runCommand(convertCmd);
+        if (!skipConversion) {
+          std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
+          const char* stamped_cstr = stamped_str.c_str();
+          Buzzer_playSound();
 
-            // sprintf(mp4FileName, mp4File, stamped_cstr);
-            // printf("Copying %s to SD card\n", mp4FileName);
-            // copyFileToSDCard(mp4FileName);
-        }
-        else {
-            sprintf(convertCmd, convertCmdFormat, vidIdx, stamped_cstr);
-            printf("Saving clip as %s.mp4\n", stamped_cstr);
-            runCommand(convertCmd);
+          if (checkMntSuccess()) {
+              sprintf(convertCmd, convertMp4FileSDCard, vidIdx, stamped_cstr);
+              printf("Saving %s.mp4 to SD card.\n", mp4FileName);
+              runCommand(convertCmd);
+
+              // sprintf(mp4FileName, mp4File, stamped_cstr);
+              // printf("Copying %s to SD card\n", mp4FileName);
+              // copyFileToSDCard(mp4FileName);
+          }
+          else {
+              sprintf(convertCmd, convertCmdFormat, vidIdx, stamped_cstr);
+              printf("Saving %s.mp4 to on-board storage.\n", stamped_cstr);
+              runCommand(convertCmd);
+          }
         }
     }
     printf("Terminating CONVERSION_THREAD\n");

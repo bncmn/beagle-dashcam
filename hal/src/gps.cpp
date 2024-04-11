@@ -110,6 +110,7 @@ std::string GPS_read() {
 }
 
 void GPS_cleanup() {
+  printf("Closing GPS serial port.\n");
   close(serial_port);
 }
 

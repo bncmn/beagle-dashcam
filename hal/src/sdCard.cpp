@@ -22,6 +22,7 @@ static void runCommand(const char* command)
         printf(" exit code: %d\n", exitCode);
     } else {
         mntSuccess = true;
+        printf("SD card mounted successfully.\n");
     }
 }
 
@@ -34,6 +35,7 @@ void mountSDCard() {
 void unmountSDCard() {
     if (mntSuccess) {
         runCommand("sudo umount " MOUNT_PATH);
+        printf("SD card unmounted.\n");
     }
 }
 

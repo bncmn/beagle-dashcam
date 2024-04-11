@@ -139,6 +139,7 @@ void Display_set(int num) {
 }
 
 void Display_cleanup(void) {
-    writeToFile("0", LEFT_14D_VAL);
-    writeToFile("0", RIGHT_14D_VAL);
+  printf("Cleaning up display.\n");
+  writeToFile("0", LEFT_14D_VAL);
+  writeToFile("0", RIGHT_14D_VAL);
 }
