@@ -92,6 +92,7 @@ static void* detectMotion(void *arg) {
 			printf("Motion detecting reactivated.\n");
 		}
 	}
+  printf("Terminating MOTION_THREAD\n");
   return nullptr;
 }
 
@@ -105,6 +106,7 @@ static void* detectButtonPress(void *arg) {
 			printf("Button reactivated.\n");
 		}
   }
+  printf("Terminating BUTTON_THREAD\n");
   return nullptr;
 }
 
@@ -118,6 +120,7 @@ static void* detectCollision(void *arg) {
       printf("Accelerometer reactivated.\n");
     }
   }
+  printf("Terminating COLLISION_THREAD\n");
   return nullptr;
 }
 

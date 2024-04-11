@@ -17,23 +17,25 @@
 
 int main() {
   printf("Launching BeagleDashCam...\n");
-  unmountSDCard();
-  mountSDCard();
+  //mountSDCard();
   GPS_init();
   Buzzer_init();
   Display_init();
   Acceleromerter_init();
   Udp_init();
   CameraControl_init();
-  initAllPins();
+  joystick_init();
   Shutdown_init();
 
   Shutdown_waitingShutdown();
 
   Shutdown_cleanup();
+  joystick_cleanup();
   CameraControl_cleanup();
-  unmountSDCard();
-  // GPS_cleanup();
+  Udp_cleanup();
+  Display_cleanup();
+  GPS_cleanup();
+  //unmountSDCard();
   
   return 0;
 }

@@ -30,7 +30,7 @@ static int deleteIdx = 5;
 
 CameraEvent event;
 
-static const char* recordCmdFormat = "./capture -F -c 1000 -o > ./videos/output%d.raw";
+static const char* recordCmdFormat = "./capture -F -c 200 -o > ./videos/output%d.raw";
 static const char* convertCmdFormat = "ffmpeg -f mjpeg -i ./videos/output%d.raw -vcodec copy ./videos/%s.mp4";
 static const char* deleteCmdFormat = "rm ./videos/output%d.raw";
 
@@ -103,6 +103,7 @@ static void* recordingThread(void*) {
         runCommand(deleteCmd);
         incrementVideo();
     }
+    printf("Terminating RECORDING_THREAD\n");
     return nullptr;
 }
 
@@ -112,8 +113,8 @@ static void* conversionThread(void*) {
 
     while (!Shutdown_isShutdown()) {
         event_wait(&event);
-        // std::string stamped_str = getDateTimeStr();
-        std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
+        std::string stamped_str = getDateTimeStr();
+        // std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
         const char* stamped_cstr = stamped_str.c_str();
         sprintf(convertCmd, convertCmdFormat, vidIdx, stamped_cstr);
         Buzzer_playSound();
@@ -121,8 +122,9 @@ static void* conversionThread(void*) {
         runCommand(convertCmd);
 
         sprintf(mp4FileName, mp4File, stamped_cstr);
-        printf("Copying %s to SD card\n", mp4FileName);
-        copyFileToSDCard(mp4FileName);
+        //printf("Copying %s to SD card\n", mp4FileName);
+        //copyFileToSDCard(mp4FileName);
     }
+    printf("Terminating CONVERSION_THREAD\n");
     return nullptr;
 }

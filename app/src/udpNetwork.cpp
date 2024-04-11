@@ -85,6 +85,7 @@ static void* udpThreadFunc(void*) {
             Udp_sendMessage(messageTx.c_str());
         }
     }
+    printf("Terminating UDP_THREAD\n");
     return nullptr;
 }
 
