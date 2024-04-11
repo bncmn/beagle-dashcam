@@ -34,7 +34,8 @@ static const char* recordCmdFormat = "./capture -F -c 200 -o > ./videos/output%d
 static const char* convertCmdFormat = "ffmpeg -f mjpeg -i ./videos/output%d.raw -vcodec copy ./videos/%s.mp4";
 static const char* deleteCmdFormat = "rm ./videos/output%d.raw";
 
-static const char* mp4File = "./videos/%s.mp4";
+// static const char* mp4File = "./videos/%s.mp4";
+static const char* convertMp4FileSDCard = "sudo ffmpeg -f mjpeg -i ./videos/output%d.raw -vcodec copy " MOUNT_PATH "/%s.mp4";
 
 static void runCommand(const char* command)
 {
@@ -116,14 +117,22 @@ static void* conversionThread(void*) {
         std::string stamped_str = getDateTimeStr();
         // std::string stamped_str = getDateTimeStr() + "_" + GPS_read();
         const char* stamped_cstr = stamped_str.c_str();
-        sprintf(convertCmd, convertCmdFormat, vidIdx, stamped_cstr);
         Buzzer_playSound();
-        printf("Saving clip as %s.mp3\n", stamped_cstr);
-        runCommand(convertCmd);
 
-        sprintf(mp4FileName, mp4File, stamped_cstr);
-        //printf("Copying %s to SD card\n", mp4FileName);
-        //copyFileToSDCard(mp4FileName);
+        if (checkMntSuccess()) {
+            sprintf(convertCmd, convertMp4FileSDCard, vidIdx, stamped_cstr);
+            printf("Saving %s.mp4 to SD card\n", mp4FileName);
+            runCommand(convertCmd);
+
+            // sprintf(mp4FileName, mp4File, stamped_cstr);
+            // printf("Copying %s to SD card\n", mp4FileName);
+            // copyFileToSDCard(mp4FileName);
+        }
+        else {
+            sprintf(convertCmd, convertCmdFormat, vidIdx, stamped_cstr);
+            printf("Saving clip as %s.mp4\n", stamped_cstr);
+            runCommand(convertCmd);
+        }
     }
     printf("Terminating CONVERSION_THREAD\n");
     return nullptr;
