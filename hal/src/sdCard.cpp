@@ -1,5 +1,7 @@
 #include "hal/sdCard.h"
 
+bool mntSuccess = false;
+
 static void runCommand(const char* command)
 {
     // Execute the shell command (output into pipe)
@@ -8,7 +10,7 @@ static void runCommand(const char* command)
     // so we don't get an error when closing the pipe.
     char buffer[1024];
     while (!feof(pipe) && !ferror(pipe)) {
-        if (fgets(buffer, sizeof(buffer), pipe) == NULL)
+        if (fgets(buffer, sizeof(buffer), pipe) == NULL) 
             break;
         // printf("--> %s", buffer); // Uncomment for debugging
     }
@@ -18,6 +20,9 @@ static void runCommand(const char* command)
         perror("Unable to execute command:");
         printf(" command: %s\n", command);
         printf(" exit code: %d\n", exitCode);
+    } else {
+        mntSuccess = true;
+        printf("SD card mounted successfully.\n");
     }
 }
 
@@ -28,7 +33,14 @@ void mountSDCard() {
 
 // unmount sd card when done
 void unmountSDCard() {
-	runCommand("sudo umount " MOUNT_PATH);
+    if (mntSuccess) {
+        runCommand("sudo umount " MOUNT_PATH);
+        printf("SD card unmounted.\n");
+    }
+}
+
+bool checkMntSuccess() {
+    return mntSuccess;
 }
 
 // can cp (or can change to mv) mp4 file

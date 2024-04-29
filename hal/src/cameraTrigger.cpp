@@ -88,10 +88,11 @@ static void* detectMotion(void *arg) {
 	while (!Shutdown_isShutdown()) {
 		if (isMotionSensorOn && getReading(A2D_FILE_VOLTAGE1) > 4000) {
 			event_trigger(event);
-			sleep(3);
+			sleep(5);
 			printf("Motion detecting reactivated.\n");
 		}
 	}
+  printf("Terminating MOTION_THREAD\n");
   return nullptr;
 }
 
@@ -105,6 +106,7 @@ static void* detectButtonPress(void *arg) {
 			printf("Button reactivated.\n");
 		}
   }
+  printf("Terminating BUTTON_THREAD\n");
   return nullptr;
 }
 
@@ -118,6 +120,7 @@ static void* detectCollision(void *arg) {
       printf("Accelerometer reactivated.\n");
     }
   }
+  printf("Terminating COLLISION_THREAD\n");
   return nullptr;
 }
 

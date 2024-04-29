@@ -18,5 +18,6 @@
 void GPS_init(void);
 std::string GPS_read(void);
 void GPS_cleanup(void);
+bool GPS_connected();
 
 #endif

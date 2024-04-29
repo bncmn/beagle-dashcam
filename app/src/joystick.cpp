@@ -110,6 +110,7 @@ void initAllPins(void) {
 
 void joystick_init() {
     pthread_create(&joystick_TID, NULL, joystickThread, NULL);
+    initAllPins();
 }
 
 void joystick_cleanup() {
@@ -119,8 +120,10 @@ void joystick_cleanup() {
 static void* joystickThread(void *arg) {
     while (!Shutdown_isShutdown()) {
         if (anyDirectionPressed()) {
+            printf("Shutdown requested.\n");
             Shutdown_triggerShutdown();
         }
     }
+    printf("Terminating JOYSTICK_THREAD\n");
     return NULL;
 }

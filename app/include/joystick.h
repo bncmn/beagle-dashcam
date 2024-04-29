@@ -21,4 +21,8 @@ void initPin(int pin);
 
 void initAllPins(void);
 
+void joystick_init();
+
+void joystick_cleanup();
+
 #endif

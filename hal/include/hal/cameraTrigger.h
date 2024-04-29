@@ -18,6 +18,7 @@ typedef struct {
 
 void CameraTrigger_init(CameraEvent *event);
 void CameraTrigger_cleanup(CameraEvent *event);
+void event_trigger(CameraEvent *event);
 void event_wait(CameraEvent *event);
 
 void CameraTrigger_turnSensorOn();
