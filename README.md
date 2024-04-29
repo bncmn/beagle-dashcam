@@ -10,11 +10,14 @@ BeagleDashCam is a full-stack vehicle dashcam system developed on the BeagleBone
   - The system stores ten 1-minute-long video clips into a buffer (on the on-board eMMC).
   - The oldest clip is deleted once the buffer is filled.
 - Event recording
-  - Accelerometer events (via I2C)
-  - Motion events using a motion detector (connected via A2D)
-  - Manual button-press trigger (connected through GPIO)
+  - Accelerometer events (via I2C).
+  - Motion events using a motion detector (connected via A2D).
+  - Manual button-press trigger (connected through GPIO).
 - Geo-tagging
-  - Saved clips are tagged with latitude and longtitude sourced from a GPS module (connected via UART)
+  - Saved clips are tagged with latitude and longtitude sourced from a GPS module (connected via UART).
+- Web Interface
+  - Shows a camera livestream (laggy).
+  - Provide a toggle for the motion sensor.
 
 # Live Demo Videos
 Continuous Recording + Button Press Trigger (links to YouTube)
